@@ -13,18 +13,6 @@ var (
   data map[string]string //Que significa?
 )
 
-func main(){
-  flag.Parse()
-  data = map[string]string{}
-  r:= httprouter.New()
-  r.GET("/entry/:key", show)
-  r.GET("/list", show)
-  r.PUT("/entry/:key/:value", update)
-  err := http.ListenAndServe(*addr, r)
-  if err != nil{
-    log.Fatal("ListenAndServe:", err)
-  }
-}
 
 func show(w http.ResponseWriter, r *http.Request, p httprouter.Params){
   k:= p.ByName("key")
@@ -32,7 +20,7 @@ func show(w http.ResponseWriter, r *http.Request, p httprouter.Params){
     fmt.Fprintf(w, "Read list: %v", data)
     return
   }
-  fmt.Fprintf(w, "Read entry: data[%s] = %s", k, data[k])
+  fmt.Fprintf(w, "Read request: data[%s] = %s", k, data[k])
 }
 
 func update(w http.ResponseWriter, r *http.Request, p httprouter.Params){
@@ -42,4 +30,17 @@ func update(w http.ResponseWriter, r *http.Request, p httprouter.Params){
   data[k] = v
 
   fmt.Fprintf(w, "Update: data[%s] = %s", k, data[k])
+}
+
+func main(){
+  flag.Parse()
+  data = map[string]string{}
+  r:= httprouter.New()
+  r.GET("/request/:key", show)
+  r.GET("/list", show)
+  r.PUT("/request/:key/:value", update)
+  err := http.ListenAndServe(*addr, r)
+  if err != nil{
+    log.Fatal("ListenAndServe:", err)
+  }
 }
